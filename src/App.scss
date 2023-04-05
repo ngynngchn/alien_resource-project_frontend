@@ -10,8 +10,8 @@
 		display: grid;
 		grid-template-columns: repeat(3, 1fr);
 	}
-	border: 1px solid var(--red);
-	border-radius: 3px;
+	border: 2px solid var(--red);
+	border-radius: 5px;
 }
 
 .Selection {
@@ -31,6 +31,7 @@
 		padding: 2rem 1rem;
 		&:hover {
 			border-color: rgb(4, 111, 38);
+			translate: 0 3px;
 		}
 	}
 }
@@ -48,6 +49,30 @@
 			width: inherit;
 			background-color: var(--red);
 			transition: height 1s linear;
+		}
+	}
+}
+
+.PopUp {
+	position: absolute;
+	background-color: rgba(62, 61, 61, 0.286);
+	top: 0;
+	bottom: 0;
+	left: 0;
+	right: 0;
+	backdrop-filter: blur(10px);
+	display: grid;
+	place-content: center;
+	div {
+		background: linear-gradient(145deg, rgb(31, 31, 31), black);
+		width: 500px;
+		border-radius: 4px;
+		padding: 3rem;
+		h6 {
+			font-size: 2rem;
+		}
+		span {
+			color: var(--red);
 		}
 	}
 }

@@ -1,11 +1,13 @@
 import React from "react";
 
-function Selection({ amount }) {
+function Selection({ amount, onClick }) {
 	return (
 		<div className="Selection">
 			<h2>{amount}</h2>
 			<h2>Human</h2>
-			<button value={amount}>+</button>
+			<button onClick={onClick} value={amount}>
+				+
+			</button>
 		</div>
 	);
 }
