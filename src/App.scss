@@ -1,0 +1,53 @@
+#root {
+	max-width: 1280px;
+	margin: 0 auto;
+	padding: 2rem;
+	text-align: center;
+}
+
+.App {
+	main {
+		display: grid;
+		grid-template-columns: repeat(3, 1fr);
+	}
+	border: 1px solid var(--red);
+	border-radius: 3px;
+}
+
+.Selection {
+	width: 300px;
+	display: grid;
+	grid-template-columns: 0.5fr 1fr min-content;
+	align-items: center;
+	button {
+		font-size: 1.5rem;
+	}
+}
+
+.Sell {
+	.sell-btn {
+		background-color: rgb(66, 116, 66);
+		font-size: 6rem;
+		padding: 2rem 1rem;
+		&:hover {
+			border-color: rgb(4, 111, 38);
+		}
+	}
+}
+
+.Capacity {
+	display: grid;
+	place-content: center;
+	.bar {
+		height: 400px;
+		width: 100px;
+		background-color: rgb(21, 20, 20);
+		display: flex;
+		align-items: flex-end;
+		.process {
+			width: inherit;
+			background-color: var(--red);
+			transition: height 1s linear;
+		}
+	}
+}
