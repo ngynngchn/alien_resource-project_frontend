@@ -13,6 +13,8 @@ function App() {
 	const [sold, setSold] = useState(false);
 	const [lastRev, setLastRev] = useState(0);
 
+	const url = import.meta.env.VITE_BACKEND || "http://localhost:8889";
+
 	// get balance and capacity status
 	// useEffect(() => {
 	// 	fetch("http://localhost:8889/api/v1/status")
@@ -27,7 +29,7 @@ function App() {
 	useEffect(() => {
 		const fetchData = async () => {
 			try {
-				const response = await fetch("http://localhost:8889/api/v1/status");
+				const response = await fetch(`${url}/api/v1/status`);
 				const data = await response.json();
 				console.log(data);
 
@@ -65,7 +67,7 @@ function App() {
 			})
 			.catch((err) => console.log(err)); */
 		try {
-			const response = await fetch("http://localhost:8889/api/v1/resources", {
+			const response = await fetch(`${url}/api/v1/resources`, {
 				method: "POST",
 				headers: { "Content-Type": "application/json" },
 				body: JSON.stringify(resource),
@@ -104,7 +106,7 @@ function App() {
 		let sale = { time: timeStamp, id: sales.length };
 
 		try {
-			const response = await fetch("http://localhost:8889/api/v1/sell", {
+			const response = await fetch(`${url}/api/v1/sell`, {
 				method: "POST",
 				headers: { "Content-Type": "application/json" },
 				body: JSON.stringify(sale),
