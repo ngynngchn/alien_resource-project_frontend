@@ -7,51 +7,80 @@ import Sell from "./components/Sell";
 import PopUp from "./components/PopUp";
 
 function App() {
-	const [balance, setBalance] = useState(0);
-	const [capacity, setCapacity] = useState(0);
-	const [revenue, setRevenue] = useState(0);
+	const [status, setStatus] = useState({});
 	const [sales, setSales] = useState([]);
-	const [totalSales, setTotalSales] = useState([]);
+
 	const [sold, setSold] = useState(false);
 	const [lastRev, setLastRev] = useState(0);
 
 	// get balance and capacity status
+	// useEffect(() => {
+	// 	fetch("http://localhost:8889/api/v1/status")
+	// 		.then((response) => response.json())
+	// 		.then((data) => {
+	// 			console.log(data);
+	//			setStatus(data)
+	//
+	// 		});
+	// }, []);
+
 	useEffect(() => {
-		fetch("http://localhost:8889/api/v1/status")
-			.then((response) => response.json())
-			.then((data) => {
+		const fetchData = async () => {
+			try {
+				const response = await fetch("http://localhost:8889/api/v1/status");
+				const data = await response.json();
 				console.log(data);
-				setBalance(data.status.balance);
-				setCapacity(data.status.capacity);
-				setRevenue(data.status.revenue);
-			});
+
+				setStatus(data.status);
+			} catch (err) {
+				console.log(err);
+				throw new Error("Sorry I could not get your information");
+			}
+		};
+		fetchData();
 	}, []);
 
+	console.log(status);
+
 	// add resources
-	function addResources(e) {
+	async function addResources(e) {
 		let amount = e.target.value;
 		let timeStamp = new Date();
 
-		let resource = { resources: amount, id: sales.length, time: timeStamp };
+		let resource = {
+			resources: amount,
+			id: status["current-harvest"].length,
+			time: timeStamp,
+		};
 
-		fetch("http://localhost:8889/api/v1/resources", {
+		/* fetch("http://localhost:8889/api/v1/resources", {
 			method: "POST",
 			headers: { "Content-Type": "application/json" },
 			body: JSON.stringify(resource),
 		})
 			.then((response) => response.json())
 			.then((data) => {
-				setCapacity(data.status.capacity);
-				setRevenue(data.status.revenue);
-				setSales(data.status["current-harvest"]);
-				setTotalSales(data.sales);
+				setStatus(data.status);
+				setSales(data.sales);
 			})
-			.catch((err) => console.log(err));
+			.catch((err) => console.log(err)); */
+		try {
+			const response = await fetch("http://localhost:8889/api/v1/resources", {
+				method: "POST",
+				headers: { "Content-Type": "application/json" },
+				body: JSON.stringify(resource),
+			});
+			const data = await response.json();
+			setStatus(data.status);
+			setSales(data.sales);
+		} catch (err) {
+			throw new Error("Sorry I could not add your resources");
+		}
 	}
 
 	// sell resources
 
-	function sellResources() {
+	/* 	function sellResources() {
 		setSold(true);
 		let timeStamp = new Date();
 		let sale = { time: timeStamp, id: totalSales.length };
@@ -63,31 +92,48 @@ function App() {
 		})
 			.then((response) => response.json())
 			.then((data) => {
-				setCapacity(data.status.capacity);
-				setRevenue(data.status.revenue);
-				setBalance(data.status.balance);
-				setSales(data.status["current-harvest"]);
-				setTotalSales(data.sales);
-				setLastRev(data.sales[data.sales.length - 1]["total-revenue"]);
+			setStatus(data.status);
+			setSales(data.sales);
+			setLastRev(data.sales[data.sales.length - 1]["total-revenue"]);
 			})
 			.catch((err) => console.log(err));
+	} */
+	async function sellResources() {
+		setSold(true);
+		let timeStamp = new Date();
+		let sale = { time: timeStamp, id: sales.length };
+
+		try {
+			const response = await fetch("http://localhost:8889/api/v1/sell", {
+				method: "POST",
+				headers: { "Content-Type": "application/json" },
+				body: JSON.stringify(sale),
+			});
+			const data = await response.json();
+			setStatus(data.status);
+			setSales(data.sales);
+			setLastRev(data.sales[data.sales.length - 1]["total-revenue"]);
+		} catch (err) {
+			throw new Error("Sorry I couldn't sell your resources");
+		}
 	}
-	console.log("rev", revenue);
+
+	console.log("rev", status.revenue);
 
 	return (
 		<div className="App">
 			{sold && (
 				<PopUp
-					balance={balance}
+					balance={status.balance}
 					revenue={lastRev}
 					onClick={() => setSold(false)}
 				/>
 			)}
-			<h1>${balance}</h1>
+			<h1>${status.balance}</h1>
 			<main>
 				<Harvest onClick={addResources} />
-				<Capacity humans={capacity} />
-				<Sell revenue={revenue} onClick={sellResources} />
+				<Capacity humans={status.capacity} />
+				<Sell revenue={status.revenue} onClick={sellResources} />
 			</main>
 		</div>
 	);
